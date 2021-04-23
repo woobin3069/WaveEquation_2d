@@ -1,10 +1,8 @@
-%% Solving a PDE
 clear;
 % Equation
 % wtt = c^22 wxx  + c^2 wyy + f
 
 %% Domain
-% Space
 Lx=10;
 Ly=10;
 dx=0.1;
@@ -14,10 +12,8 @@ ny=fix(Ly/dy);
 x=linspace(0, Lx, nx);
 y=linspace(0, Ly, ny);
 
-%Time
-T=10;
+T=10; %Time
 
-%% Field variable
 wn=zeros(nx, ny);
 wnm1=wn; % w at time n-1
 wnp1=wn; % w at time n+1
@@ -27,18 +23,13 @@ CFL=0.5;
 c=1;
 dt=CFL*dx/c;
 
-%% Initial conditions
-
-%% Time stepping Loop
+%% Main
 t=0;
 
 while(t < T)
-    
-    % Reflecting Boundary Conditions
     wn(:, [1 end])=0;
     wn([1 end], :)=0;
     
-    % Absorbing boundary conditions
     %wnp(1,:)=wn(2,:) + ((CFL-1)/(CFL+1)*(wnp1(2,:)-wn(1,:));
     %wnp(end,:)=wn(end-1,:) + ((CFL-1)/(CFL+1)*(wnp1(end-1,:)-wn(end,:));
     %wnp(:,1)=wn(:,2) + ((CFL-1)/(CFL+1)*(wnp1(:,2)-wn(:,1));
@@ -46,7 +37,7 @@ while(t < T)
     
     % Solution
     t=t+dt;
-    wnm1=wn; wn=wnp1; % Save current and previous arrays
+    wnm1=wn; wn=wnp1;
     
     % Source
     wn(50,50)=dt^2*20*sin(30*pi*t/20);
@@ -55,10 +46,8 @@ while(t < T)
             wnp1(i,j) = 2*wn(i,j) - wnm1(i,j) ...
                 + CFL^2 * (wn(i+1,j) + wn(i,j+1) - 4*wn(i,j) + wn(i-1,j) + wn(i,j-1));
     end, end
-
-    % Check convergence
     
-    % Visualize at selected steps
+    % Visualize
     clf;
     subplot(2,1,1);
     imagesc(x, y, wn'); colorbar; caxis([-0.02 0.02])
